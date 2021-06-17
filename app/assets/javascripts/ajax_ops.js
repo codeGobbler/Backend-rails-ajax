@@ -5,11 +5,15 @@ function handle_ajax(event) {
   const listUsersButton = document.getElementById('list-users');
   const listFactsButton = document.getElementById('list-facts-button');
   const createUserButton = document.getElementById('create-user');
+  const createFactsButton = document.getElementById('create-facts-button');
   const userName = document.getElementById('user-username');
   const userPassword = document.getElementById('user-password');
   const updateUserButton = document.getElementById('update-user')
   const userID = document.getElementById('user-id')
   const userID2 = document.getElementById('user-id-two')
+  const userID3 = document.getElementById('user-id-three')
+  const fact = document.getElementById('user-fact')
+  const factLikes = document.getElementById('fact-likes')
   const userName1 = document.getElementById('user-username1')
   const userPassword1 = document.getElementById('user-password1')
   const deleteUserButton = document.getElementById('delete-user')
@@ -137,6 +141,34 @@ function handle_ajax(event) {
       }).catch((error) => {
         console.log(error);
         alert(error);
+      });
+    } else if (event.target === createFactsButton) {
+      var dataObject = {
+        user_id: userID3.value,
+        fact_text: fact.value,
+        likes: factLikes.value
+      }
+      fetch(`${users_path}/${userID3.value}/facts`,
+        { method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(dataObject)
+        }
+      ).then((response) => {
+        if (response.status === 201) {
+          response.json().then((data) => {
+            resultsDiv.innerHTML = '';
+            let parag = document.createElement('P');
+            parag.textContent = JSON.stringify(data);
+            resultsDiv.appendChild(parag);
+          });
+        } else {
+          response.json().then((data) => {
+            alert(`Return code ${response.status} ${response.statusText} ${JSON.stringify(data)}`);
+          }).catch((error) => {
+            console.log(error);
+            alert(error);
+          });
+        }
       });
     }
   });
