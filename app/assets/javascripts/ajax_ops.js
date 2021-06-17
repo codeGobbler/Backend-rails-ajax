@@ -10,6 +10,8 @@ function handle_ajax(event) {
   const userID = document.getElementById('user-id')
   const userName1 = document.getElementById('user-username1')
   const userPassword1 = document.getElementById('user-password1')
+  const deleteUserButton = document.getElementById('delete-user')
+  const deleteUserId = document.getElementById('delete-user-id')
   const users_path = 'http://localhost:3001/api/v1/users'
 
   restOpsDiv.addEventListener('click', (event) => {
@@ -73,6 +75,31 @@ function handle_ajax(event) {
         { method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(dataObject)
+        }
+      ).then((response) => {
+        if (response.status === 200) {
+          response.json().then((data) => {
+            resultsDiv.innerHTML = '';
+            let parag = document.createElement('P');
+            parag.textContent = JSON.stringify(data);
+            resultsDiv.appendChild(parag);
+          });
+        } else {
+          response.json().then((data) => {
+            alert(`Return code ${response.status} ${response.statusText} ${JSON.stringify(data)}`);
+          }).catch((error) => {
+            console.log(error);
+            alert(error);
+          });
+        }
+      });
+    } else if (event.target === deleteUserButton) {
+      var dataObject = {
+        username: deleteUserId.value
+      }
+      fetch(`${users_path}/${deleteUserId.value}`,
+        { method: 'DELETE',
+          headers: { 'Content-Type': 'application/json' }
         }
       ).then((response) => {
         if (response.status === 200) {
