@@ -3,11 +3,13 @@ function handle_ajax(event) {
   const resultsDiv = document.getElementById('results-div');
   const restOpsDiv = document.getElementById('rest-ops');
   const listUsersButton = document.getElementById('list-users');
+  const listFactsButton = document.getElementById('list-facts-button');
   const createUserButton = document.getElementById('create-user');
   const userName = document.getElementById('user-username');
   const userPassword = document.getElementById('user-password');
   const updateUserButton = document.getElementById('update-user')
   const userID = document.getElementById('user-id')
+  const userID2 = document.getElementById('user-id-two')
   const userName1 = document.getElementById('user-username1')
   const userPassword1 = document.getElementById('user-password1')
   const deleteUserButton = document.getElementById('delete-user')
@@ -117,6 +119,24 @@ function handle_ajax(event) {
             alert(error);
           });
         }
+      });
+    } else if (event.target === listFactsButton) {
+      fetch(`${users_path}/${userID2.value}/facts/`).then((response) => {
+        if (response.status === 200) {
+          resultsDiv.innerHTML = '';
+          response.json().then((data) => {
+            for (let i=0; i<data.length; i++) {
+              let parag = document.createElement('P');
+              parag.textContent = JSON.stringify(data[i]);
+              resultsDiv.appendChild(parag);
+            }
+          });
+        } else {
+          alert(`Return code ${response.status} ${response.statusText}`);
+        }
+      }).catch((error) => {
+        console.log(error);
+        alert(error);
       });
     }
   });
