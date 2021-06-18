@@ -9,11 +9,16 @@ function handle_ajax(event) {
   const userName = document.getElementById('user-username');
   const userPassword = document.getElementById('user-password');
   const updateUserButton = document.getElementById('update-user')
+  const updateFactsButton = document.getElementById('update-facts-button')
   const userID = document.getElementById('user-id')
   const userID2 = document.getElementById('user-id-two')
   const userID3 = document.getElementById('user-id-three')
+  const userIDUpdateFact = document.getElementById('user-id-update-fact')
   const fact = document.getElementById('user-fact')
+  const factID = document.getElementById('fact-id')
+  const factUpdate = document.getElementById('user-fact-update')
   const factLikes = document.getElementById('fact-likes')
+  const factLikesUpdate = document.getElementById('fact-likes-update')
   const userName1 = document.getElementById('user-username1')
   const userPassword1 = document.getElementById('user-password1')
   const deleteUserButton = document.getElementById('delete-user')
@@ -155,6 +160,43 @@ function handle_ajax(event) {
         }
       ).then((response) => {
         if (response.status === 201) {
+          response.json().then((data) => {
+            resultsDiv.innerHTML = '';
+            let parag = document.createElement('P');
+            parag.textContent = JSON.stringify(data);
+            resultsDiv.appendChild(parag);
+          });
+        } else {
+          response.json().then((data) => {
+            alert(`Return code ${response.status} ${response.statusText} ${JSON.stringify(data)}`);
+          }).catch((error) => {
+            console.log(error);
+            alert(error);
+          });
+        }
+      });
+    } else if (event.target === updateFactsButton) {
+      var dataObject = {
+        user_id: userIDUpdateFact.value,
+        fact_text: factUpdate.value,
+        likes: factLikesUpdate.value
+      }
+      if (dataObject.user_id === "") {  // blank user_ids not supported
+        delete dataObject.user_id;
+      }
+      if (dataObject.fact_text === "") { // blank fact_text not supported
+        delete dataObject.fact_text;
+      }
+      if (dataObject.likes === "") {
+        delete dataObject.likes;
+      }
+      fetch(`${users_path}/${userIDUpdateFact.value}/facts/${factID.value}`,
+        { method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(dataObject)
+        }
+      ).then((response) => {
+        if (response.status === 200 || response.status === 204) {
           response.json().then((data) => {
             resultsDiv.innerHTML = '';
             let parag = document.createElement('P');
